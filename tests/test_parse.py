@@ -13,6 +13,11 @@ def test_iso_date() -> None:
     assert parse("2025-12-01", TODAY) == date(2025, 12, 1)
 
 
+def test_yyyy_slash_date() -> None:
+    assert parse("2025/12/04", TODAY) == date(2025, 12, 4)
+    assert parse("2025/1/5", TODAY) == date(2025, 1, 5)
+
+
 def test_us_slash_date() -> None:
     assert parse("12/25/2024", TODAY) == date(2024, 12, 25)
 

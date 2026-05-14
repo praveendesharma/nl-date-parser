@@ -23,5 +23,6 @@ parse("5 days before December 1st, 2025")
 ```bash
 uv run pytest
 uv run ruff check
-uv run mypy src/nldate tests
+uv run ruff format --check .
+uv run mypy src/ tests
 ```

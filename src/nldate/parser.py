@@ -187,7 +187,16 @@ def _apply_offset(base: date, off: tuple[int, int, int, int], sign: int) -> date
 
 
 def _try_iso(t: str, _today: date) -> date | None:
-    m = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})", t)
+    m = re.fullmatch(r"(\d{4})-(\d{1,2})-(\d{1,2})", t)
+    if not m:
+        return None
+    y, mo, d = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    return date(y, mo, d)
+
+
+def _try_yyyy_slash(t: str, _today: date) -> date | None:
+    """e.g. ``2025/12/04`` (year / month / day)."""
+    m = re.fullmatch(r"(\d{4})/(\d{1,2})/(\d{1,2})", t)
     if not m:
         return None
     y, mo, d = int(m.group(1)), int(m.group(2)), int(m.group(3))
@@ -278,8 +287,11 @@ def _this_weekday(today: date, weekday: int) -> date:
 
 
 def _weekday_phrase(t: str, today: date) -> date | None:
-    m = re.fullmatch(r"(next|last|this)\s+(monday|mon|tuesday|tue|tues|wednesday|wed|thursday|"
-                     r"thu|thur|thurs|friday|fri|saturday|sat|sunday|sun)", t)
+    m = re.fullmatch(
+        r"(next|last|this)\s+(monday|mon|tuesday|tue|tues|wednesday|wed|thursday|"
+        r"thu|thur|thurs|friday|fri|saturday|sat|sunday|sun)",
+        t,
+    )
     if not m:
         return None
     which, name = m.group(1), m.group(2)
@@ -358,6 +370,7 @@ def parse(s: str, today: date | None = None) -> date:
 
     chain: list[Callable[[str, date], date | None]] = [
         _try_iso,
+        _try_yyyy_slash,
         _try_us_slash,
         _month_day_year_pattern,
         _anchor_only,
