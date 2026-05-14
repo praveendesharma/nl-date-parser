@@ -1,4 +1,8 @@
 __pycache__/
-src/nldate.egg-info
+*.egg-info/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .vscode/
 repo_url.txt

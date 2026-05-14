@@ -1,74 +1,50 @@
-# nldate
+# nl-date-parser
 
-Small Python helper that turns everyday English date phrases into `datetime.date` values—no LLM, just pattern matching. Handy for forms, chat bots, or quick internal tools where you want `"next Tuesday"` or `"in two weeks"` to resolve to a real calendar date.
+Course-sized library for **DSC 190 Assignment 06**: turn plain-English calendar strings into `datetime.date` values using rules and regex—no network, no model.
 
-**Requires Python 3.12+**
+The import name is still **`nldate`** (package under `src/nldate/`), so your code looks like:
 
-## Install
-
-From the repo (with [uv](https://github.com/astral-sh/uv)):
-
-```bash
-uv sync
+```python
+from nldate import parse
 ```
 
-Or install the package into your environment (after cloning / from a path):
-
-```bash
-pip install .
-```
-
-For local development dependencies (pytest, ruff, mypy):
+## Quick start (uv)
 
 ```bash
 uv sync --group dev
+uv run pytest
+uv run ruff check src tests
+uv run ruff format --check .
+uv run mypy src/
 ```
 
-## Usage
+Install into another environment:
+
+```bash
+uv pip install .
+# or: pip install .
+```
+
+## API
 
 ```python
 from datetime import date
 
 from nldate import parse
 
-# Reference date defaults to today()
-parse("tomorrow")
-parse("next Friday")
+parse("next Tuesday")  # uses today's date as reference
 
-# Pin the reference for tests or batch jobs
 ref = date(2025, 6, 4)
-parse("in 3 days", today=ref)           # 2025-06-07
-parse("the day after tomorrow", today=ref)  # 2025-06-06
+parse("in 3 days", today=ref)
 parse("5 days before December 1st, 2025", today=ref)
-parse("1 year and 2 months after yesterday", today=ref)
 ```
 
-`parse(text, today=None)` returns a `date`. If `today` is omitted, relative phrases use the real current date.
+`parse(text, today=None)` returns a `date`. Unsupported input raises `ValueError`.
 
-Invalid or unsupported strings raise `ValueError`.
+## Coverage (informal)
 
-## What it understands (examples)
+Phrases like anchors (`tomorrow`, `the day after tomorrow`), ISO-like numerics (`2025-12-01`, `2025/12/4`), named months, weekday qualifiers (`next` / `last` / `this`), rolling periods (`next month`), offsets (`in …`, `… ago`, `… from today`), and stacked offsets (`1 year and 2 months after yesterday`) are handled; see **`tests/test_parse.py`** for the exact expectations.
 
-Not an exhaustive spec—the test suite is the ground truth—but typical inputs include:
+## Note on `repo_url.txt`
 
-- **Anchors:** `today`, `tomorrow`, `yesterday`, `now`, `the day after tomorrow`, `the day before yesterday`
-- **ISO-style:** `2025-12-01`, `2025/12/4` (single-digit month/day allowed)
-- **Named dates:** `December 1st, 2025`, `Dec. 1, 2025`, `15 March 2026`, `March 15` (year defaults to reference year)
-- **Ordinals:** `the 20th`, `the 15th of March`
-- **Weekdays:** `next Tuesday`, `last Friday`, `this Wednesday`
-- **Periods:** `next week`, `last month`, `this year`
-- **Offsets:** `in 3 days`, `two weeks ago`, `3 days from now`, `in a year`
-- **Compound:** `two weeks from tomorrow`, `3 weeks after Jan 1 2026`, `1 week and 3 days before December 1st 2025`
-
-Whitespace and common capitalization variants are normalized.
-
-## Development
-
-```bash
-uv sync --group dev
-uv run pytest
-uv run ruff check src tests
-uv run mypy src
-```
-
----
+If you keep a local `repo_url.txt` for Gradescope, it is listed in `.gitignore` so it is not pushed to GitHub.
