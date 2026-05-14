@@ -176,9 +176,16 @@ wheels = [
 ]
 
 [[package]]
-name = "nl-date-parser"
+name = "nldate"
 version = "0.1.0"
 source = { editable = "." }
+
+[package.optional-dependencies]
+dev = [
+    { name = "mypy" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
 
 [package.dev-dependencies]
 dev = [
@@ -188,12 +195,18 @@ dev = [
 ]
 
 [package.metadata]
+requires-dist = [
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8" },
+]
+provides-extras = ["dev"]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "mypy", specifier = ">=1.15.0" },
-    { name = "pytest", specifier = ">=8.3.0" },
-    { name = "ruff", specifier = ">=0.15.12" },
+    { name = "mypy", specifier = ">=1" },
+    { name = "pytest", specifier = ">=9.0.3" },
+    { name = "ruff", specifier = ">=0.8" },
 ]
 
 [[package]]
